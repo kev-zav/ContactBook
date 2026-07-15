@@ -1,11 +1,26 @@
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
         ArrayList<Contact> contacts = new ArrayList<>();
         boolean running = true;
         Scanner scanner = new Scanner(System.in);
+
+    try {
+        Scanner fileScanner = new Scanner(new File("contactbook.txt"));
+        while (fileScanner.hasNextLine()) {
+            String line = fileScanner.nextLine();
+            String[] parts = line.split(",");
+            Contact c = new Contact(parts[0], parts[1], parts[2]);
+            contacts.add(c);
+        }
+        fileScanner.close();
+    } catch (Exception e) {
+        System.out.println("No existing contacts found.");
+    }
 
         while (running) {
             System.out.println("1. View all contacts.");
@@ -71,6 +86,15 @@ public class Main {
                     break;
 
                 case 5: 
+                    try {
+                        FileWriter fw = new FileWriter("contactbook.txt");
+                        for (Contact c : contacts) {
+                            fw.write(c.getName() + "," + c.getPhoneNumber() + "," + c.getEmail() + "\n");
+                        }
+                        fw.close();
+                    }catch (Exception e) {
+                        System.out.println("Error saving data.");
+                    }
                     running = false;
                     break;
                     
@@ -78,6 +102,4 @@ public class Main {
         }
         scanner.close();
         }
-    }
-
-    
+}
